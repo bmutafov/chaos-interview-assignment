@@ -1,0 +1,30 @@
+@mixin form-component() {
+  border: 2px solid #e9e9e9;
+  padding: 15px 30px;
+  border-radius: 5px;
+
+  &:hover,
+  &:focus {
+    border-color: var(--secondary-dark);
+  }
+}
+
+.loginContainer {
+  width: 60%;
+  margin: 0 auto;
+
+  input[type="email"],
+  input[type="password"] {
+    @include form-component();
+  }
+
+  button {
+    @include form-component();
+
+    &:hover {
+      background-color: var(--secondary) !important;
+      color: white;
+      border-color: var(--secondary-dark);
+    }
+  }
+}
