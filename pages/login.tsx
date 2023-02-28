@@ -2,9 +2,10 @@ import { Auth } from "@supabase/auth-ui-react";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import styles from "./login.module.scss";
+import { Database } from "@/types/supabase";
 
 const LoginPage = () => {
-  const supabaseClient = useSupabaseClient();
+  const supabaseClient = useSupabaseClient<Database>();
   const user = useUser();
   const [data, setData] = useState();
 

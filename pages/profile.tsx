@@ -1,13 +1,25 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/types/supabase";
+import {
+  createServerSupabaseClient,
+  Session,
+  User,
+} from "@supabase/auth-helpers-nextjs";
+import { GetServerSidePropsContext } from "next";
+
+type Props = {
+  initialSession: Session;
+  user: User;
+};
 
 //TODO: FIX Types any
-export default function Profile({ user }: any) {
-  return <div>Hello {user.name}</div>;
+export default function Profile({ user }: { user: User }) {
+  console.log("🚩 ~ user:", user);
+  return <div>Logged in!, {user.email}</div>;
 }
 
-export const getServerSideProps = async (ctx: any) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   // Create authenticated Supabase Client
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createServerSupabaseClient<Database>(ctx);
   // Check if we have a session
   const {
     data: { session },
@@ -25,6 +37,6 @@ export const getServerSideProps = async (ctx: any) => {
     props: {
       initialSession: session,
       user: session.user,
-    },
+    } as Props,
   };
 };

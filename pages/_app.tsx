@@ -4,9 +4,6 @@ import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import type { AppProps } from "next/app";
 import { useState } from "react";
 
-//todo {} to a something
-const supabaseClient = createBrowserSupabaseClient<{}>();
-
 export default function App({
   Component,
   pageProps,
