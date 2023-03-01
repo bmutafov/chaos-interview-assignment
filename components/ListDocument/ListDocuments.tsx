@@ -11,14 +11,14 @@ export default function ListDocuments(props: ListDocumentProps) {
     <Table>
       <thead>
         <tr>
-          <th>Content...</th>
+          <th>Document title</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         {props.documents.map((doc) => (
           <tr key={doc.id}>
-            <td width="90%">{doc.content}</td>
+            <td width="90%">{doc.title}</td>
             <td
               style={{
                 display: "flex",

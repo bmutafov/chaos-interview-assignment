@@ -6,11 +6,13 @@ import {
   User,
 } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
-import { Button, Textarea, Title, Container, Paper, Flex } from "@mantine/core";
-import AddDocument from "@/components/AddDocument";
-import ListDocuments from "@/components/ListDocuments";
+import { Container } from "@mantine/core";
+import AddDocument from "@/components/AddDocuments";
+import ListDocuments from "@/components/ListDocument/ListDocuments";
 import React from "react";
 import { Document } from "@/types/document";
+import { REDIRECT_HOME } from "@/utils/next-serverside-utils";
+import { SupabaseServerClient } from "@/utils/supabase.client";
 
 type Props = {
   initialSession: Session;
@@ -44,37 +46,23 @@ export default function Home({ documents: documentProps }: Props) {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient<Database>(ctx);
+  const serverClient = new SupabaseServerClient(ctx);
+  const session = await serverClient.getSession();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  if (!session?.user.id) {
+    return REDIRECT_HOME;
+  }
 
-  const { data, error } = await supabase
-    .from("document_access_rights")
-    .select(
-      `
-    documentId (
-      *
-    )
-  `
-    )
-    .eq("userId", session?.user.id)
-    .eq("accessTypeId", 0);
-
-  if (!session)
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
+  const documents = await serverClient.getUserDocuments(session.user.id);
+  const extractedDocumentData = documents?.map((document) => ({
+    ...document.documentId,
+  }));
 
   return {
     props: {
       initialSession: session,
       user: session.user,
-      documents: data?.map((document) => ({ ...document.documentId })) ?? [],
+      documents: extractedDocumentData ?? [],
     } as Props,
   };
 };
