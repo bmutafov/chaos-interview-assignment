@@ -9,23 +9,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      access_type: {
-        Row: {
-          created_at: string | null
-          id: number
-          name: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          name?: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          name?: string
-        }
-      }
       comment: {
         Row: {
           content: string | null
@@ -77,19 +60,19 @@ export interface Database {
       }
       document_access_rights: {
         Row: {
-          accessTypeId: number | null
+          accessType: number
           created_at: string | null
           documentId: number
           userId: string
         }
         Insert: {
-          accessTypeId?: number | null
+          accessType: number
           created_at?: string | null
           documentId: number
           userId: string
         }
         Update: {
-          accessTypeId?: number | null
+          accessType?: number
           created_at?: string | null
           documentId?: number
           userId?: string

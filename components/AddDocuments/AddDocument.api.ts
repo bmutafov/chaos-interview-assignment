@@ -1,3 +1,4 @@
+import { AccessRight } from "@/types/access-rights";
 import { supabaseClient } from "@/utils/supabase.client";
 import { DocumentForm } from "./AddDocument";
 
@@ -19,7 +20,7 @@ export async function insertDocument(
     .from("document_access_rights")
     .insert({
       userId: formData.userId,
-      accessTypeId: 0,
+      accessType: AccessRight.Owner,
       documentId: document.id,
     });
 

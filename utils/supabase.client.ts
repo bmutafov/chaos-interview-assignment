@@ -1,3 +1,4 @@
+import { AccessRight } from "@/types/access-rights";
 import { Database } from "@/types/supabase";
 import {
   createBrowserSupabaseClient,
@@ -33,7 +34,7 @@ export class SupabaseServerClient {
         `
       )
       .eq("userId", userId)
-      .eq("accessTypeId", 0);
+      .eq("accessType", AccessRight.Owner);
 
     return data;
   };

@@ -1,12 +1,25 @@
 import { Document } from "@/types/document";
-import { ActionIcon, Button, Table } from "@mantine/core";
-import { IconFileSearch } from "@tabler/icons";
+import { ActionIcon, Alert, Button, Table } from "@mantine/core";
+import { IconAlertCircle, IconLink } from "@tabler/icons";
+import ShareDocumentModal from "../ShareDocument/ShareDocumentModal";
 
 type ListDocumentProps = {
   documents: Document[];
 };
 
 export default function ListDocuments(props: ListDocumentProps) {
+  if (!props.documents.length) {
+    return (
+      <Alert
+        icon={<IconAlertCircle size={16} />}
+        title="No documents yet"
+        color="gray"
+      >
+        You have not uploaded documents yet. Please use the form above.
+      </Alert>
+    );
+  }
+
   return (
     <Table>
       <thead>
@@ -27,10 +40,15 @@ export default function ListDocuments(props: ListDocumentProps) {
                 gap: "0.5rem",
               }}
             >
-              <ActionIcon variant="light" size="sm">
-                <IconFileSearch />
-              </ActionIcon>
-              <Button color="cyan" variant="light" size="xs" uppercase compact>
+              <ShareDocumentModal document={doc} />
+              <Button
+                color="cyan"
+                variant="light"
+                size="xs"
+                uppercase
+                compact
+                title="Preview document"
+              >
                 Preview
               </Button>
             </td>
