@@ -21,18 +21,14 @@ export async function insertDocumentAccessRight(
     .insert({
       documentId: formData.documentId,
       userId: userData.id,
-      accessTypeId: 0,
+      accessType: Number(formData.accessRights),
     })
     .select()
     .single();
 
-  if (!accessRightResponse.data) {
-    console.error("No accessRightResponse returned upon insertion");
-    return;
-  }
   if (accessRightResponse.status === 201) {
     return accessRightResponse.data;
   }
 
-  throw new Error("Could not invite user.");
+  throw new Error("User was already invited");
 }

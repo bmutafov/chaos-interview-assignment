@@ -18,12 +18,11 @@ export default function ShareDocumentModal({
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        withCloseButton={false}
+        title="Share document"
         centered
       >
         <ShareDocument document={document} />
       </Modal>
-
       <ActionIcon
         variant="light"
         size="sm"
