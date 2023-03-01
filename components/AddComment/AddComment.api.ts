@@ -3,7 +3,12 @@ import { supabaseClient } from "@/utils/supabase.client";
 import { CommentForm } from "./AddComment";
 
 export async function insertComment(
-  formData: CommentForm & { documentId: number; userId: string }
+  formData: CommentForm & {
+    documentId: number;
+    userId: string;
+    selectionEnd: number | null;
+    selectionStart: number | null;
+  }
 ) {
   const documentsResponse = await supabaseClient
     .from("comment")
@@ -11,6 +16,8 @@ export async function insertComment(
       documentId: formData.documentId,
       userId: formData.userId,
       content: formData.comment,
+      selectionEnd: formData.selectionEnd,
+      selectionStart: formData.selectionStart,
     })
     .select()
     .single();
@@ -19,15 +26,9 @@ export async function insertComment(
     console.error("No documentId returned upon insertion");
     return;
   }
-  const document = documentsResponse.data;
-  const accessRightsResponse = await supabaseClient.from("comment").insert({
-    userId: formData.userId,
-    content: formData.comment,
-    documentId: document.id,
-  });
 
-  if (documentsResponse.status === 201 && accessRightsResponse.status === 201) {
-    return document;
+  if (documentsResponse.status === 201) {
+    return documentsResponse.data;
   }
 
   return null;

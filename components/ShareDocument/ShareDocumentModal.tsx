@@ -21,7 +21,7 @@ export default function ShareDocumentModal({
         title="Share document"
         centered
       >
-        <ShareDocument document={document} />
+        <ShareDocument document={document} onSuccess={() => setOpened(false)} />
       </Modal>
       <ActionIcon
         variant="light"

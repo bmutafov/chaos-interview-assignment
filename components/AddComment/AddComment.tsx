@@ -9,6 +9,7 @@ import {
   Alert,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useTextSelection } from "@mantine/hooks";
 import { useUser } from "@supabase/auth-helpers-react";
 import { IconAlertCircle } from "@tabler/icons";
 import React from "react";
@@ -32,6 +33,7 @@ export default function AddComment({
   onCommentAdded,
 }: AddCommentProps) {
   const user = useUser();
+  const selection = useTextSelection();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const form = useForm<CommentForm>({
     initialValues: {
@@ -42,12 +44,29 @@ export default function AddComment({
     },
   });
 
+  const getSelectedText = () => {
+    const selectedText = selection?.toString();
+    if (selectedText && document.content?.includes(selectedText)) {
+      const selectionStart = document.content.indexOf(selectedText);
+      const selectionEnd = selectionStart + selectedText.length;
+      return {
+        selectionStart,
+        selectionEnd,
+      };
+    }
+    return {
+      selectionStart: null,
+      selectionEnd: null,
+    };
+  };
+
   const handleSubmit = async (formData: CommentForm) => {
     setIsLoading(true);
     const newComment = await insertComment({
       userId: user!.id,
       documentId: document.id,
       comment: formData.comment,
+      ...getSelectedText(),
     });
     if (newComment) {
       onCommentAdded(newComment as Comment);

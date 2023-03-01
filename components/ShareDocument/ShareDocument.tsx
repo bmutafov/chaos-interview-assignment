@@ -17,9 +17,13 @@ export type ShareDocumentForm = {
 
 type AddDocumentProps = {
   document: Document;
+  onSuccess: () => void;
 };
 
-export default function ShareDocument({ document }: AddDocumentProps) {
+export default function ShareDocument({
+  document,
+  onSuccess,
+}: AddDocumentProps) {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const form = useForm<ShareDocumentForm>({
@@ -36,6 +40,7 @@ export default function ShareDocument({ document }: AddDocumentProps) {
     setIsLoading(true);
     try {
       await insertDocumentAccessRight({ ...formData, documentId: document.id });
+      onSuccess();
     } catch (err) {
       form.setFieldError("userEmail", (err as Error).message);
       console.error("ERROR", err);

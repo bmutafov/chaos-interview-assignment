@@ -5,8 +5,9 @@ import { Document, Comment } from "@/types/document";
 import { getTimeBetween } from "@/utils/date-formatter";
 import { REDIRECT_HOME } from "@/utils/next-serverside-utils";
 import { SupabaseServerClient } from "@/utils/supabase.client";
-import { Container, Flex, Highlight, Paper, Title } from "@mantine/core";
+import { Alert, Container, Flex, Highlight, Paper, Title } from "@mantine/core";
 import { useUser } from "@supabase/auth-helpers-react";
+import { IconAlertCircle } from "@tabler/icons";
 import { GetServerSidePropsContext } from "next";
 import React from "react";
 
@@ -23,6 +24,7 @@ export default function DocumentPreview({
   accessRight,
 }: DocumentPreviewProps) {
   const user = useUser();
+
   const [comments, setComments] = React.useState(commentsProps);
 
   const handleAddComment = (comment: Comment) => {
@@ -43,9 +45,7 @@ export default function DocumentPreview({
         {document.title}
       </Title>
       <Paper withBorder p="xl">
-        {document.content && (
-          <Highlight highlight={""}>{document.content}</Highlight>
-        )}
+        {document.content}
       </Paper>
       <AddComment
         canAdd={[AccessRight.Owner, AccessRight.Comment].includes(accessRight)}
@@ -56,6 +56,15 @@ export default function DocumentPreview({
         User comments ({comments.length})
       </Title>
       <Flex direction="column" gap="md" mb="xl">
+        {!comments.length && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="No comments yet"
+            color="gray"
+          >
+            Be the first one to leave a comment by using the form above
+          </Alert>
+        )}
         {comments.reverse().map((comment) => (
           <ViewComment
             key={comment.id}
@@ -68,6 +77,15 @@ export default function DocumentPreview({
               comment.created_at
                 ? getTimeBetween(new Date(comment.created_at), new Date())
                 : "unknown"
+            }
+            selection={
+              comment.selectionStart && comment.selectionEnd
+                ? {
+                    document: document.content,
+                    start: comment.selectionStart,
+                    end: comment.selectionEnd,
+                  }
+                : null
             }
           />
         ))}
