@@ -4,7 +4,7 @@ export function lengthValidator(
   return (value) =>
     value.length > minLength
       ? null
-      : `Documents must be at least ${minLength} characters long`;
+      : `Must be at least ${minLength} characters long`;
 }
 
 export function emailValidator(value: string) {

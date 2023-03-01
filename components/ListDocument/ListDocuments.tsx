@@ -48,6 +48,8 @@ export default function ListDocuments(props: ListDocumentProps) {
                 uppercase
                 compact
                 title="Preview document"
+                component="a"
+                href={"/document/" + doc.id}
               >
                 Preview
               </Button>

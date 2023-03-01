@@ -38,4 +38,24 @@ export class SupabaseServerClient {
 
     return data;
   };
+
+  getSingleDocument = async (userId: string, documentId: string) => {
+    const { data } = await this.serverClient
+      .from("document_access_rights")
+      .select("accessType, document:documentId(*)")
+      .eq("documentId", documentId)
+      .eq("userId", userId)
+      .single();
+
+    return data;
+  };
+
+  getComments = async (documentId: string) => {
+    const { data } = await this.serverClient
+      .from("comment")
+      .select("*, user:userId (email)")
+      .eq("documentId", documentId);
+
+    return data;
+  };
 }
