@@ -55,7 +55,7 @@ export default function DocumentPreview({
         document={document}
         onCommentAdded={handleAddComment}
       />
-      <Title order={5} mb="md">
+      <Title order={5} my="md">
         User comments ({comments.length})
       </Title>
       <Flex direction="column" gap="md" mb="xl">

@@ -18,7 +18,7 @@ export async function insertDocumentAccessRight(
 
   const accessRightResponse = await supabaseClient
     .from("document_access_rights")
-    .insert({
+    .upsert({
       documentId: formData.documentId,
       userId: userData.id,
       accessType: Number(formData.accessRights),
