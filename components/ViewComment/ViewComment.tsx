@@ -31,7 +31,7 @@ interface CommentSimpleProps {
   } | null;
 }
 
-export function ViewComment({
+export default function ViewComment({
   postedAt,
   body,
   author,

@@ -1,6 +1,6 @@
 import { Document } from "@/types/document";
-import { ActionIcon, Button, Group, Modal, TextInput } from "@mantine/core";
-import { IconAt, IconLink } from "@tabler/icons";
+import { ActionIcon, Modal } from "@mantine/core";
+import { IconLink } from "@tabler/icons";
 import { useState } from "react";
 import ShareDocument from "./ShareDocument";
 

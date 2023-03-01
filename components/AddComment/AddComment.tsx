@@ -77,44 +77,44 @@ export default function AddComment({
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Paper my="xl" p="md" withBorder>
-        <Title order={3}>Add Comment</Title>
-        {!canAdd ? (
-          <Alert
+      <Title order={3} mt="xl">
+        Add Comment
+      </Title>
+      {!canAdd ? (
+        <Alert
+          mt="md"
+          icon={<IconAlertCircle size={16} />}
+          title="Restricted"
+          color="orange"
+        >
+          Unfortunately, the document owner has not given you access to add new
+          comments.
+        </Alert>
+      ) : (
+        <>
+          <Textarea
             mt="md"
-            icon={<IconAlertCircle size={16} />}
-            title="Restricted"
-            color="orange"
+            placeholder="Type your comment here..."
+            radius="md"
+            size="md"
+            withAsterisk
+            styles={{ input: { height: "200px" } }}
+            {...form.getInputProps("comment")}
+          />
+          <Flex
+            gap="sm"
+            justify="flex-end"
+            align="center"
+            direction="row"
+            wrap="wrap"
+            mt="md"
           >
-            Unfortunately, the document owner has not given you access to add
-            new comments.
-          </Alert>
-        ) : (
-          <>
-            <Textarea
-              mt="md"
-              placeholder="Type your comment here..."
-              radius="md"
-              size="md"
-              withAsterisk
-              styles={{ input: { height: "200px" } }}
-              {...form.getInputProps("comment")}
-            />
-            <Flex
-              gap="sm"
-              justify="flex-end"
-              align="center"
-              direction="row"
-              wrap="wrap"
-              mt="md"
-            >
-              <Button type="submit" loading={isLoading}>
-                Add comment
-              </Button>
-            </Flex>
-          </>
-        )}
-      </Paper>
+            <Button type="submit" loading={isLoading}>
+              Add comment
+            </Button>
+          </Flex>
+        </>
+      )}
     </form>
   );
 }

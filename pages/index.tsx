@@ -1,18 +1,16 @@
 import Head from "next/head";
-import { Database } from "@/types/supabase";
-import {
-  createServerSupabaseClient,
-  Session,
-  User,
-} from "@supabase/auth-helpers-nextjs";
+import { Session, User } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
-import { Container } from "@mantine/core";
+import { Button, Container, Flex } from "@mantine/core";
 import AddDocument from "@/components/AddDocuments";
-import ListDocuments from "@/components/ListDocument/ListDocuments";
+import ListDocuments from "@/components/ListDocument";
 import React from "react";
 import { Document } from "@/types/document";
 import { REDIRECT_HOME } from "@/utils/next-serverside-utils";
 import { SupabaseServerClient } from "@/utils/supabase.client";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { Database } from "@/types/supabase";
+import UserInfo from "@/components/UserInfo/UserInfo";
 
 type Props = {
   initialSession: Session;
@@ -37,6 +35,7 @@ export default function Home({ documents: documentProps }: Props) {
       </Head>
       <main>
         <Container>
+          <UserInfo />
           <AddDocument onDocumentAdded={handleDocumentAdded} />
           <ListDocuments documents={documents} />
         </Container>

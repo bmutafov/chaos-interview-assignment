@@ -1,5 +1,6 @@
-import AddComment from "@/components/AddComment/AddComment";
-import { ViewComment } from "@/components/ViewComment/ViewComment";
+import AddComment from "@/components/AddComment";
+import NoCommentsAlert from "@/components/NoCommentsAlert";
+import ViewComment from "@/components/ViewComment";
 import { AccessRight } from "@/types/access-rights";
 import { Document, Comment } from "@/types/document";
 import { getTimeBetween } from "@/utils/date-formatter";
@@ -28,16 +29,18 @@ export default function DocumentPreview({
   const [comments, setComments] = React.useState(commentsProps);
 
   const handleAddComment = (comment: Comment) => {
-    setComments((prev) => [
-      {
-        ...comment,
-        user: {
-          email: user!.email as string,
-        },
+    const newComment = {
+      ...comment,
+      user: {
+        email: user!.email as string,
       },
-      ...prev,
-    ]);
+    } as CommentWithUser;
+
+    setComments((prev) => [newComment, ...prev]);
   };
+
+  const getTimeLabel = (createdAt: string | null) =>
+    createdAt ? getTimeBetween(new Date(createdAt), new Date()) : "unknown";
 
   return (
     <Container>
@@ -56,16 +59,8 @@ export default function DocumentPreview({
         User comments ({comments.length})
       </Title>
       <Flex direction="column" gap="md" mb="xl">
-        {!comments.length && (
-          <Alert
-            icon={<IconAlertCircle size={16} />}
-            title="No comments yet"
-            color="gray"
-          >
-            Be the first one to leave a comment by using the form above
-          </Alert>
-        )}
-        {comments.reverse().map((comment) => (
+        {!comments.length && <NoCommentsAlert />}
+        {comments.map((comment) => (
           <ViewComment
             key={comment.id}
             author={{
@@ -73,20 +68,12 @@ export default function DocumentPreview({
               initials: comment.user.email.charAt(0).toUpperCase(),
             }}
             body={comment.content || ""}
-            postedAt={
-              comment.created_at
-                ? getTimeBetween(new Date(comment.created_at), new Date())
-                : "unknown"
-            }
-            selection={
-              comment.selectionStart && comment.selectionEnd
-                ? {
-                    document: document.content,
-                    start: comment.selectionStart,
-                    end: comment.selectionEnd,
-                  }
-                : null
-            }
+            postedAt={getTimeLabel(comment.created_at)}
+            selection={{
+              document: document.content,
+              start: comment.selectionStart,
+              end: comment.selectionEnd,
+            }}
           />
         ))}
       </Flex>
@@ -112,7 +99,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return {
     props: {
       document: documentData.document,
-      comments,
+      comments: comments?.reverse(),
       accessRight: documentData.accessType,
     } as DocumentPreviewProps,
   };

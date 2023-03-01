@@ -3,19 +3,17 @@ import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import styles from "./login.module.scss";
 import { Database } from "@/types/supabase";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
   const supabaseClient = useSupabaseClient<Database>();
   const user = useUser();
-  const [data, setData] = useState();
 
   useEffect(() => {
-    async function loadData() {
-      const { data } = await supabaseClient.from("test").select("*");
-      setData(data as any);
+    if (user) {
+      router.push("/");
     }
-    // Only run query once user is logged in.
-    if (user) loadData();
   }, [user]);
 
   if (!user)
@@ -24,21 +22,12 @@ const LoginPage = () => {
         <Auth
           redirectTo="http://localhost:3000/"
           supabaseClient={supabaseClient}
-          providers={["google", "github"]}
           socialLayout="horizontal"
         />
       </div>
     );
 
-  return (
-    <>
-      <button onClick={() => supabaseClient.auth.signOut()}>Sign out</button>
-      <p>user:</p>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-      <p>client-side data fetching with RLS</p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </>
-  );
+  return null;
 };
 
 export default LoginPage;

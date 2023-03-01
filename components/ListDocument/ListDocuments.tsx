@@ -1,7 +1,7 @@
 import { Document } from "@/types/document";
-import { ActionIcon, Alert, Button, Table } from "@mantine/core";
-import { IconAlertCircle, IconLink } from "@tabler/icons";
-import ShareDocumentModal from "../ShareDocument/ShareDocumentModal";
+import { Alert, Button, Table } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons";
+import { ShareDocumentModal } from "@/components/ShareDocument";
 
 type ListDocumentProps = {
   documents: Document[];

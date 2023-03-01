@@ -1,6 +1,6 @@
 export const REDIRECT_HOME = {
   redirect: {
-    destination: "/",
+    destination: "/login",
     permanent: false,
   },
 };
