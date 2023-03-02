@@ -46,32 +46,41 @@ export default function AddComment({
 
   const getSelectedText = () => {
     const selectedText = selection?.toString();
-    if (selectedText && document.content?.includes(selectedText)) {
-      const selectionStart = document.content.indexOf(selectedText);
-      const selectionEnd = selectionStart + selectedText.length;
+
+    if (!selectedText || !document.content?.includes(selectedText)) {
       return {
-        selectionStart,
-        selectionEnd,
+        selectionStart: null,
+        selectionEnd: null,
       };
     }
-    return {
-      selectionStart: null,
-      selectionEnd: null,
-    };
+
+    const selectionStart = document.content.indexOf(selectedText);
+    const selectionEnd = selectionStart + selectedText.length;
+
+    return { selectionStart, selectionEnd };
   };
 
   const handleSubmit = async (formData: CommentForm) => {
     setIsLoading(true);
+
+    const { id: userId } = user!;
+    const { id: documentId } = document;
+    const { comment } = formData;
+    const { selectionStart, selectionEnd } = getSelectedText();
+
     const newComment = await insertComment({
-      userId: user!.id,
-      documentId: document.id,
-      comment: formData.comment,
-      ...getSelectedText(),
+      userId,
+      documentId,
+      comment,
+      selectionStart,
+      selectionEnd,
     });
+
     if (newComment) {
       onCommentAdded(newComment as Comment);
       form.reset();
     }
+
     setIsLoading(false);
   };
 

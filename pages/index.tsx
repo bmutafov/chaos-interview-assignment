@@ -44,15 +44,19 @@ export default function Home({ documents: documentProps }: Props) {
   );
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const serverClient = new SupabaseServerClient(ctx);
-  const session = await serverClient.getSession();
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const supabaseServerClient = new SupabaseServerClient(context);
+  const session = await supabaseServerClient.getSession();
 
   if (!session?.user.id) {
     return REDIRECT_HOME;
   }
 
-  const documents = await serverClient.getUserDocuments(session.user.id);
+  const documents = await supabaseServerClient.getUserDocuments(
+    session.user.id
+  );
   const extractedDocumentData = documents?.map((document) => ({
     ...document.documentId,
   }));
@@ -61,7 +65,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     props: {
       initialSession: session,
       user: session.user,
-      documents: extractedDocumentData ?? [],
+      documents: extractedDocumentData || [],
     } as Props,
   };
 };

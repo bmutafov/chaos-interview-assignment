@@ -3,6 +3,13 @@ import { Alert, Button, Table } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
 import { ShareDocumentModal } from "@/components/ShareDocument";
 
+const tdInlineStyles: React.CSSProperties = {
+  display: "flex",
+  "justifyContent": "flex-end",
+  alignItems: "center",
+  gap: "0.5rem",
+};
+
 type ListDocumentProps = {
   documents: Document[];
 };
@@ -32,14 +39,7 @@ export default function ListDocuments(props: ListDocumentProps) {
         {props.documents.map((doc) => (
           <tr key={doc.id}>
             <td width="90%">{doc.title}</td>
-            <td
-              style={{
-                display: "flex",
-                "justifyContent": "flex-end",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
+            <td style={tdInlineStyles}>
               <ShareDocumentModal document={doc} />
               <Button
                 color="cyan"
@@ -49,7 +49,7 @@ export default function ListDocuments(props: ListDocumentProps) {
                 compact
                 title="Preview document"
                 component="a"
-                href={"/document/" + doc.id}
+                href={`/document/${doc.id}`}
               >
                 Preview
               </Button>

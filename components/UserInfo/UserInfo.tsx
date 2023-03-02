@@ -19,7 +19,7 @@ const UserInfo: React.FC<UserInfoProps> = () => {
   return (
     <Flex justify="space-between" mt="xl">
       <div>
-        Logged in as <b>{user?.email}</b>
+        Logged in as <b>{user!.email}</b>
       </div>
       <Button variant="outline" color="red" onClick={handleLogout}>
         Logout

@@ -31,6 +31,23 @@ interface CommentSimpleProps {
   } | null;
 }
 
+type NonNullableProperties<T> = {
+  [P in keyof T]: NonNullable<T[P]>;
+};
+
+type NonNullableSelection = NonNullableProperties<
+  NonNullable<CommentSimpleProps["selection"]>
+>;
+
+const hasSelection = (
+  selection: CommentSimpleProps["selection"]
+): selection is NonNullableSelection => {
+  if (!selection) return false;
+
+  const { document, start, end } = selection;
+  return Boolean(document && start && end);
+};
+
 export default function ViewComment({
   postedAt,
   body,
@@ -38,9 +55,6 @@ export default function ViewComment({
   selection,
 }: CommentSimpleProps) {
   const { classes } = useStyles();
-
-  const showQuotedText =
-    selection && selection.document && selection.start && selection.end;
 
   return (
     <Paper withBorder radius="md" className={classes.comment}>
@@ -56,15 +70,15 @@ export default function ViewComment({
         </div>
       </Group>
       <Text className={classes.body} size="sm">
-        {showQuotedText && (
+        {hasSelection(selection) && (
           <Paper withBorder p="sm">
             <Highlight
-              highlight={selection.document!.substring(
-                selection.start!,
-                selection.end!
+              highlight={selection.document.substring(
+                selection.start,
+                selection.end
               )}
             >
-              {selection.document!}
+              {selection.document}
             </Highlight>
           </Paper>
         )}

@@ -38,13 +38,19 @@ export default function ShareDocument({
 
   const handleSubmit = async (formData: ShareDocumentForm) => {
     setIsLoading(true);
+
+    const { id: documentId } = document;
+
     try {
-      await insertDocumentAccessRight({ ...formData, documentId: document.id });
+      await insertDocumentAccessRight({ ...formData, documentId });
       onSuccess();
     } catch (err) {
-      form.setFieldError("userEmail", (err as Error).message);
-      console.error("ERROR", err);
+      const error = err as Error;
+
+      form.setFieldError("userEmail", error.message);
+      console.error(error);
     }
+
     setIsLoading(false);
   };
 

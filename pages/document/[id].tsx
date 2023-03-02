@@ -19,6 +19,12 @@ type DocumentPreviewProps = {
   accessRight: AccessRight;
 };
 
+const getTimeLabel = (createdAt: string | null) =>
+  createdAt ? getTimeBetween(new Date(createdAt), new Date()) : "Unknown date";
+
+const canAdd = (accessRight: AccessRight) =>
+  [AccessRight.Owner, AccessRight.Comment].includes(accessRight);
+
 export default function DocumentPreview({
   document,
   comments: commentsProps,
@@ -28,19 +34,27 @@ export default function DocumentPreview({
 
   const [comments, setComments] = React.useState(commentsProps);
 
-  const handleAddComment = (comment: Comment) => {
-    const newComment = {
+  const addUserDataToComment = (comment: Comment): CommentWithUser => {
+    if (!user) {
+      throw new Error("No logged in user found, cannot create comment.");
+    }
+
+    const { email } = user;
+    return {
       ...comment,
       user: {
-        email: user!.email as string,
+        email: email as string,
       },
-    } as CommentWithUser;
-
-    setComments((prev) => [newComment, ...prev]);
+    };
   };
 
-  const getTimeLabel = (createdAt: string | null) =>
-    createdAt ? getTimeBetween(new Date(createdAt), new Date()) : "unknown";
+  const handleAddComment = (comment: Comment) => {
+    try {
+      setComments((prev) => [addUserDataToComment(comment), ...prev]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Container>
@@ -51,7 +65,7 @@ export default function DocumentPreview({
         {document.content}
       </Paper>
       <AddComment
-        canAdd={[AccessRight.Owner, AccessRight.Comment].includes(accessRight)}
+        canAdd={canAdd(accessRight)}
         document={document}
         onCommentAdded={handleAddComment}
       />
@@ -81,11 +95,13 @@ export default function DocumentPreview({
   );
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const serverClient = new SupabaseServerClient(ctx);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const serverClient = new SupabaseServerClient(context);
   const session = await serverClient.getSession();
   const userId = session?.user.id;
-  const documentId = ctx.params?.id;
+  const documentId = context.params?.id;
 
   if (!userId || !documentId || Array.isArray(documentId)) {
     return REDIRECT_HOME;

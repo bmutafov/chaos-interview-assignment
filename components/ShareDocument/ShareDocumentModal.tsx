@@ -13,22 +13,21 @@ export default function ShareDocumentModal({
 }: ShareDocumentModalProps) {
   const [opened, setOpened] = useState(false);
 
+  const openModal = () => setOpened(true);
+
+  const closeModal = () => setOpened(false);
+
   return (
     <>
       <Modal
         opened={opened}
-        onClose={() => setOpened(false)}
+        onClose={closeModal}
         title="Share document"
         centered
       >
-        <ShareDocument document={document} onSuccess={() => setOpened(false)} />
+        <ShareDocument document={document} onSuccess={closeModal} />
       </Modal>
-      <ActionIcon
-        variant="light"
-        size="sm"
-        title="Share"
-        onClick={() => setOpened(true)}
-      >
+      <ActionIcon variant="light" size="sm" title="Share" onClick={openModal}>
         <IconLink />
       </ActionIcon>
     </>
