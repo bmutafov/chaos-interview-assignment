@@ -1,3 +1,4 @@
+import { ANONYMOUS_USER_ID } from "@/constants/user.consts";
 import { AccessRight } from "@/types/access-rights";
 import { Database } from "@/types/supabase";
 import {
@@ -39,12 +40,12 @@ export class SupabaseServerClient {
     return data;
   };
 
-  getSingleDocument = async (userId: string, documentId: string) => {
+  getSingleDocument = async (documentId: string, userId?: string) => {
     const { data } = await this.serverClient
       .from("document_access_rights")
       .select("accessType, document:documentId(*)")
       .eq("documentId", documentId)
-      .eq("userId", userId)
+      .eq("userId", userId || ANONYMOUS_USER_ID)
       .single();
 
     return data;

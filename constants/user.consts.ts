@@ -1,0 +1,1 @@
+export const ANONYMOUS_USER_ID = "1ac41db9-027e-4a09-889c-b4423b03773b";

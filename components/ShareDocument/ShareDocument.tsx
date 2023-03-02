@@ -1,9 +1,9 @@
 import { AccessRight } from "@/types/access-rights";
 import { Document } from "@/types/document";
-import { Button, Flex, Select, TextInput } from "@mantine/core";
+import { Button, Checkbox, Flex, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconAt } from "@tabler/icons";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   emailValidator,
   lengthValidator,
@@ -13,11 +13,23 @@ import { insertDocumentAccessRight } from "./ShareDocument.api";
 export type ShareDocumentForm = {
   userEmail: string;
   accessRights: string;
+  anyone: boolean;
 };
 
 type AddDocumentProps = {
   document: Document;
   onSuccess: () => void;
+};
+
+const getSelectOptions = (isAnonymousShare: boolean) => {
+  const readOption = { value: AccessRight.Read.toString(), label: "Read" };
+  const commentOption = {
+    value: AccessRight.Comment.toString(),
+    label: "Read & comment",
+  };
+
+  if (isAnonymousShare) return [readOption];
+  else return [readOption, commentOption];
 };
 
 export default function ShareDocument({
@@ -30,11 +42,21 @@ export default function ShareDocument({
     initialValues: {
       userEmail: "",
       accessRights: AccessRight.Read.toString(),
+      anyone: false,
     },
     validate: {
-      userEmail: emailValidator,
+      userEmail: (value, values) =>
+        !values.anyone ? emailValidator(value) : null,
     },
   });
+
+  const { anyone: anyoneFormValue } = form.values;
+
+  useEffect(() => {
+    if (anyoneFormValue) {
+      form.clearFieldError("userEmail");
+    }
+  }, [anyoneFormValue, form]);
 
   const handleSubmit = async (formData: ShareDocumentForm) => {
     setIsLoading(true);
@@ -61,24 +83,24 @@ export default function ShareDocument({
           label="User"
           placeholder="Enter user email..."
           icon={<IconAt size={14} />}
+          disabled={anyoneFormValue}
           {...form.getInputProps("userEmail")}
         />
         <Select
           label="Access right"
           placeholder="Select access rights"
-          data={[
-            { value: AccessRight.Read.toString(), label: "Read" },
-            { value: AccessRight.Comment.toString(), label: "Read & comment" },
-          ]}
+          data={getSelectOptions(anyoneFormValue)}
           {...form.getInputProps("accessRights")}
         />
-        <Button
-          sx={{ alignSelf: "flex-end" }}
-          type="submit"
-          loading={isLoading}
-        >
-          Share
-        </Button>
+        <Flex align="center" justify="space-between">
+          <Checkbox
+            label="Anyone with the link"
+            {...(form.getInputProps("anyone"), { type: "checkbox" })}
+          />
+          <Button type="submit" loading={isLoading}>
+            Share
+          </Button>
+        </Flex>
       </Flex>
     </form>
   );

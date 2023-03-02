@@ -103,11 +103,12 @@ export const getServerSideProps = async (
   const userId = session?.user.id;
   const documentId = context.params?.id;
 
-  if (!userId || !documentId || Array.isArray(documentId)) {
+  if (!documentId || Array.isArray(documentId)) {
     return REDIRECT_HOME;
   }
 
-  const documentData = await serverClient.getSingleDocument(userId, documentId);
+  const documentData = await serverClient.getSingleDocument(documentId, userId);
+
   if (!documentData) return REDIRECT_HOME;
 
   const comments = await serverClient.getComments(documentId);

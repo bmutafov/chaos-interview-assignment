@@ -1,34 +1,60 @@
+import { ANONYMOUS_USER_ID } from "@/constants/user.consts";
+import { DocumentAccessRights } from "@/types/document";
 import { supabaseClient } from "@/utils/supabase.client";
 import { ShareDocumentForm } from "./ShareDocument";
 
-export async function insertDocumentAccessRight(
-  formData: ShareDocumentForm & {
-    documentId: number;
-  }
+type ShareDocumentFormWithDocumentId = ShareDocumentForm & {
+  documentId: number;
+};
+
+async function upsertDocumentAccessRights(
+  formData: Omit<DocumentAccessRights, "created_at">
 ) {
-  const { data: userData } = await supabaseClient
-    .from("users")
-    .select("id")
-    .eq("email", formData.userEmail)
-    .single();
+  const { documentId, userId, accessType } = formData;
 
-  if (!userData) {
-    throw new Error("User is not registered");
-  }
-
-  const accessRightResponse = await supabaseClient
+  const { status, data, error } = await supabaseClient
     .from("document_access_rights")
     .upsert({
-      documentId: formData.documentId,
-      userId: userData.id,
-      accessType: Number(formData.accessRights),
+      accessType,
+      userId,
+      documentId,
     })
     .select()
     .single();
 
-  if (accessRightResponse.status === 201) {
-    return accessRightResponse.data;
+  if (status === 201) return data;
+  else throw new Error(error?.message);
+}
+
+async function getUserData(userEmail: string) {
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("id")
+    .eq("email", userEmail)
+    .single();
+
+  if (!data) throw new Error(error.message);
+  return data;
+}
+
+export async function insertDocumentAccessRight(
+  formData: ShareDocumentFormWithDocumentId
+) {
+  const { accessRights, documentId, userEmail } = formData;
+  const accessType = Number(accessRights);
+
+  if (formData.anyone) {
+    return upsertDocumentAccessRights({
+      accessType,
+      documentId: documentId,
+      userId: ANONYMOUS_USER_ID,
+    });
   }
 
-  throw new Error("User was already invited");
+  const { id: userId } = await getUserData(userEmail);
+  return upsertDocumentAccessRights({
+    documentId,
+    accessType,
+    userId,
+  });
 }

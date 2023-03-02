@@ -1,3 +1,4 @@
+import { ANONYMOUS_USER_ID } from "@/constants/user.consts";
 import { Comment, Document } from "@/types/document";
 import {
   Paper,
@@ -63,7 +64,7 @@ export default function AddComment({
   const handleSubmit = async (formData: CommentForm) => {
     setIsLoading(true);
 
-    const { id: userId } = user!;
+    const { id: userId } = user || { id: ANONYMOUS_USER_ID };
     const { id: documentId } = document;
     const { comment } = formData;
     const { selectionStart, selectionEnd } = getSelectedText();
