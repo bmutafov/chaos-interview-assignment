@@ -16,10 +16,12 @@ const UserInfo: React.FC<UserInfoProps> = () => {
     router.push("/login");
   };
 
+  if (!user) return null;
+
   return (
     <Flex justify="space-between" mt="xl">
       <div>
-        Logged in as <b>{user!.email}</b>
+        Logged in as <b>{user.email}</b>
       </div>
       <Button variant="outline" color="red" onClick={handleLogout}>
         Logout
