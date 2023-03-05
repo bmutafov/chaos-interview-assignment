@@ -95,7 +95,7 @@ export default function ShareDocument({
         <Flex align="center" justify="space-between">
           <Checkbox
             label="Anyone with the link"
-            {...(form.getInputProps("anyone"), { type: "checkbox" })}
+            {...form.getInputProps("anyone")}
           />
           <Button type="submit" loading={isLoading}>
             Share
